@@ -201,7 +201,16 @@
               <svg class="tool-tile-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path class="ti-brand" d="M13.5 4.5a11.5 11.5 0 0 0 0 23z" /><path class="ti-teal" d="M18.5 4.5a11.5 11.5 0 0 1 0 23z" /><path d="M13.5 4.5a11.5 11.5 0 0 0 0 23zM18.5 4.5a11.5 11.5 0 0 1 0 23z" /></svg>
               <span class="tool-tile-name" data-i18n="toolSplitByColor">Split by color</span>
             </a>
-            <a class="tool-tile" href="/en/paint" data-tool-option="paint" data-i18n-title="toolPaintHint" title="Paint colors onto the model with a brush or a fill.">
+            
+            <a class="tool-tile" href="#simplify-colors" id="prismNativeSimplifyTile" data-tool-option="simplify-colors" title="Simplificar y limpiar paleta de colores para AMS/MMU.">
+              <svg class="tool-tile-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <circle cx="10" cy="12" r="6" fill="#06b6d4" fill-opacity="0.8" />
+                <circle cx="22" cy="12" r="6" fill="#ec4899" fill-opacity="0.8" />
+                <circle cx="16" cy="22" r="6" fill="#8b5cf6" fill-opacity="0.8" />
+              </svg>
+              <span class="tool-tile-name" style="color:#38bdf8; font-weight:700;">Simplificar Colores</span>
+            </a>
+<a class="tool-tile" href="/en/paint" data-tool-option="paint" data-i18n-title="toolPaintHint" title="Paint colors onto the model with a brush or a fill.">
               <svg class="tool-tile-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path class="ti-gray" d="M3.5 18.5 12 23.2V30l-8.5-4.7z" /><path class="ti-paper" d="m12 23.2 8.5-4.7v6.8L12 30z" /><path class="ti-brand" d="M3.5 18.5 12 13.8l8.5 4.7-8.5 4.7z" /><path d="M3.5 18.5 12 13.8l8.5 4.7v6.8L12 30l-8.5-4.7zM12 23.2V30M3.5 18.5 12 23.2l8.5-4.7" /><path d="m29 2.8-5.6 5.6" stroke-width="2.6" /><path class="ti-brand" d="m22.2 7.6 2.2 2.2-3.4 3.4c-1.1 1.1-2.9 1.6-4.4 1.2-.4-1.5.1-3.3 1.2-4.4z" /></svg>
               <span class="tool-tile-name" data-i18n="toolPaint">Paint</span>
             </a>
@@ -543,7 +552,47 @@
           <div id="toleranceGuidePopover" class="cap-info-popover tolerance-guide-popover" role="dialog" aria-modal="false" data-i18n-aria-label="toleranceGuideTitle" aria-label="Connector tolerance recommendation" hidden></div>
         </section>
 
-        <section id="paintTool" class="settings paint-tool" data-tool-panel="paint">
+        
+        <!-- NATIVE PRISM3D SIMPLIFY COLORS PANEL -->
+        <section id="prismSimplifySection" class="settings" style="display:none; border:1px solid rgba(6,182,212,0.3); border-radius:8px; padding:16px; margin-bottom:16px; background:rgba(17,24,39,0.85);">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <h2 style="margin:0; font-size:1.1rem; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>🎨</span> Simplificar y Reducir Colores
+            </h2>
+            <span style="background:#0284c7; color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;">NATIVO</span>
+          </div>
+
+          <p style="font-size:0.8rem; color:#94a3b8; line-height:1.4; margin-bottom:14px;">
+            Optimiza el modelo para tu impresora multicolor (Bambu Lab AMS, Prusa MMU, Anycubic ACE Pro). Reduce la cantidad de filamentos necesarios y elimina manchas accidentales o píxeles sueltos del pincel.
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.85rem; font-weight:600;">Límite de Ranuras AMS / Colores:</span>
+              <select id="nativeColorLimitSelect" style="background:#0f172a; border:1px solid #334155; color:#fff; padding:6px 10px; border-radius:6px; font-weight:600;">
+                <option value="2">2 Colores (Dual Extruder)</option>
+                <option value="4" selected>4 Colores (1x AMS / MMU)</option>
+                <option value="8">8 Colores (2x AMS)</option>
+                <option value="16">16 Colores</option>
+              </select>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                <span>Filtro de Ruido (Islas aisladas):</span>
+                <strong id="nativeNoiseThresholdDisplay" style="color:#38bdf8;">25 caras</strong>
+              </div>
+              <input type="range" id="nativeNoiseSlider" min="5" max="100" value="25" style="accent-color:#06b6d4; cursor:pointer;" />
+              <span style="font-size:0.75rem; color:#64748b;">Las manchas de pintura con menos caras se fusionarán con el color vecino dominante.</span>
+            </div>
+
+            <button id="nativeApplySimplifyBtn" type="button" class="split-action" style="margin-top:6px; width:100%; padding:10px; font-size:0.9rem; cursor:pointer;">
+              ✨ Aplicar Simplificación de Colores
+            </button>
+          </div>
+        </section>
+
+<section id="paintTool" class="settings paint-tool" data-tool-panel="paint">
           <div class="section-title section-heading-row">
             <h2 id="paintColorHeading" data-i18n="paintColorHeading">Color</h2>
             <button id="paintEditColorButton" type="button" class="icon-option icon-option-small" data-tip="paintEditColor"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20l1.1-4.3L16.2 4.6a2.1 2.1 0 0 1 3 3L8.3 18.8z"/><path d="M14.6 6.2l3 3"/><path class="i-band" d="M4 20l1.1-4.3 3.2 3.2z"/></svg></button>
