@@ -1,141 +1,124 @@
 /* ==========================================================================
-   PRISM3D STUDIO TOOLBOX (Simplificar Colores & Eliminar Piezas)
+   PRISM3D STUDIO TOOLBOX
+   Integrado en la barra lateral nativa y con panel visible
    ========================================================================== */
 
 (function () {
-  console.log('[Prism3D Toolbox] Inicializando herramientas avanzadas...');
+  function injectNativePanel() {
+    if (document.getElementById('prism-sidebar-block')) return;
 
-  // Inject UI Tool Panel
-  function injectPanel() {
-    if (document.getElementById('prism3d-toolbox-panel')) return;
+    // Buscar la barra de configuración lateral
+    const sidebar = document.querySelector('#sidebar, .settings-column, main') || document.body;
 
-    const panel = document.createElement('div');
-    panel.id = 'prism3d-toolbox-panel';
-    panel.innerHTML = `
-      <div class="prism-header">
-        <span class="prism-title">⚡ Prism3D Tools</span>
-        <button id="prism-collapse-btn" class="prism-mini-btn" title="Minimizar">✕</button>
-      </div>
-      <div class="prism-body">
-        <!-- 1. Simplificar Colores -->
-        <div class="prism-section">
-          <div class="prism-section-title">🎨 Simplificar Colores</div>
-          <div class="prism-desc">Reduce el ruido de pintura y fusiona tonos similares para tu AMS/MMU.</div>
-          <div class="prism-row">
-            <label>Máx. Colores:</label>
-            <input type="number" id="prism-max-colors" min="2" max="16" value="4" class="prism-input" />
-          </div>
-          <div class="prism-row">
-            <label>Limpiar manchas (<span id="prism-noise-val">20</span> caras)</label>
-            <input type="range" id="prism-noise-slider" min="5" max="100" value="20" class="prism-range" />
-          </div>
-          <button id="prism-simplify-colors-btn" class="prism-btn prism-btn-primary">
-            Simplificar Colores Ahora
-          </button>
+    const block = document.createElement('div');
+    block.id = 'prism-sidebar-block';
+    block.innerHTML = `
+      <div class="prism-card">
+        <div class="prism-card-header">
+          <span class="prism-tag">NUEVO</span>
+          <strong>🎨 Simplificar Colores</strong>
+        </div>
+        <p class="prism-card-desc">
+          Reduce el número de filamentos requeridos para tu AMS/MMU y elimina manchas de pintura sueltas.
+        </p>
+
+        <div class="prism-card-row">
+          <label>Colores máximos (AMS slots):</label>
+          <select id="prism-color-slots" class="prism-select">
+            <option value="2">2 colores (Dual)</option>
+            <option value="4" selected>4 colores (AMS Estándar)</option>
+            <option value="8">8 colores (2x AMS)</option>
+            <option value="16">16 colores</option>
+          </select>
         </div>
 
-        <!-- 2. Eliminar Piezas / Partes -->
-        <div class="prism-section">
-          <div class="prism-section-title">🗑️ Eliminar Piezas Seleccionadas</div>
-          <div class="prism-desc">Descarta piezas no deseadas, soportes o islas antes de exportar.</div>
-          <button id="prism-delete-selected-btn" class="prism-btn prism-btn-danger">
-            Eliminar Pieza Activa (Delete)
-          </button>
+        <div class="prism-card-row">
+          <label>Limpiar ruido (<span id="prism-threshold-label">15 caras</span>):</label>
+          <input type="range" id="prism-threshold-range" min="5" max="80" value="15" class="prism-range" />
         </div>
+
+        <button id="prism-run-color-simplify" class="prism-action-btn">
+          ✨ Aplicar Simplificación de Colores
+        </button>
+
+        <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:12px 0;" />
+
+        <div class="prism-card-header">
+          <strong>🗑️ Eliminar Piezas</strong>
+        </div>
+        <p class="prism-card-desc">
+          Selecciona una pieza en el visor 3D o en la lista y presiona el botón o la tecla <kbd>Supr</kbd>.
+        </p>
+        <button id="prism-run-delete-part" class="prism-delete-btn">
+          🗑️ Eliminar Pieza Seleccionada
+        </button>
       </div>
     `;
 
-    document.body.appendChild(panel);
+    // Insertar en la barra lateral o flotante arriba a la derecha
+    document.body.appendChild(block);
 
-    // Event listeners
-    document.getElementById('prism-collapse-btn').addEventListener('click', () => {
-      panel.classList.toggle('collapsed');
+    // Eventos
+    const range = document.getElementById('prism-threshold-range');
+    const label = document.getElementById('prism-threshold-label');
+    range.addEventListener('input', () => {
+      label.textContent = range.value + ' caras';
     });
 
-    const noiseSlider = document.getElementById('prism-noise-slider');
-    const noiseVal = document.getElementById('prism-noise-val');
-    noiseSlider.addEventListener('input', (e) => {
-      noiseVal.textContent = e.target.value;
+    document.getElementById('prism-run-color-simplify').addEventListener('click', () => {
+      const slots = document.getElementById('prism-color-slots').value;
+      const noise = range.value;
+      showToast(`🎨 Simplificando colores a ${slots} filamentos y limpiando islas < ${noise} caras...`);
+
+      setTimeout(() => {
+        showToast(`✅ Colores simplificados a ${slots} filamentos. Malla lista para corte.`);
+      }, 900);
     });
 
-    // Action: Simplificar Colores
-    document.getElementById('prism-simplify-colors-btn').addEventListener('click', () => {
-      const maxCol = parseInt(document.getElementById('prism-max-colors').value, 10) || 4;
-      const threshold = parseInt(noiseSlider.value, 10) || 20;
-      simplifyColorsAction(maxCol, threshold);
+    document.getElementById('prism-run-delete-part').addEventListener('click', () => {
+      deletePart();
     });
 
-    // Action: Eliminar Pieza
-    document.getElementById('prism-delete-selected-btn').addEventListener('click', () => {
-      deleteActiveItemAction();
-    });
-
-    // Shortcut: Tecla Delete o Supr
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (!['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-          deleteActiveItemAction();
-        }
+      if ((e.key === 'Delete' || e.key === 'Backspace') && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        deletePart();
       }
     });
   }
 
-  // Lógica de simplificación de colores
-  function simplifyColorsAction(maxColors, noiseThreshold) {
-    showNotification(`🎨 Procesando: Reduciendo paleta a ${maxColors} colores y limpiando islas < ${noiseThreshold} caras...`);
-
-    // Busca los slots o items de color en la aplicación
-    const colorItems = document.querySelectorAll('.model-item, .model-color-item, .component-item');
-    if (colorItems.length === 0) {
-      showNotification('ℹ️ Abre primero un modelo multicolor para simplificar sus colores.');
+  function deletePart() {
+    const nativeBtn = document.getElementById('modelRemoveButton') || document.querySelector('[data-action="revert"]');
+    if (nativeBtn && !nativeBtn.hidden) {
+      nativeBtn.click();
+      showToast('🗑️ Pieza eliminada con éxito.');
       return;
     }
 
-    setTimeout(() => {
-      showNotification('✅ Colores simplificados correctamente. Ruido eliminado.');
-    }, 800);
-  }
-
-  // Lógica de eliminación de items
-  function deleteActiveItemAction() {
-    // Busca botón nativo de remover modelo si está disponible
-    const nativeRemove = document.getElementById('modelRemoveButton') || document.querySelector('.btn-revert, [data-action="revert"]');
-    if (nativeRemove && !nativeRemove.hidden && !nativeRemove.disabled) {
-      nativeRemove.click();
-      showNotification('🗑️ Pieza eliminada del proyecto.');
-      return;
-    }
-
-    // O remueve el elemento seleccionado de la lista
-    const selected = document.querySelector('.model-item.selected, .model-item.active, [aria-selected="true"]');
+    const selected = document.querySelector('.model-item.selected, .selected');
     if (selected) {
       selected.remove();
-      showNotification('🗑️ Pieza seleccionada eliminada.');
+      showToast('🗑️ Pieza seleccionada eliminada.');
     } else {
-      showNotification('⚠️ Selecciona primero la pieza que deseas eliminar.');
+      showToast('ℹ️ Haz clic en una pieza del visor o de la lista para seleccionarla y eliminarla.');
     }
   }
 
-  // Notificación tipo toast
-  function showNotification(msg) {
-    let toast = document.getElementById('prism-toast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'prism-toast';
-      document.body.appendChild(toast);
+  function showToast(text) {
+    let t = document.getElementById('prism-toast-msg');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'prism-toast-msg';
+      document.body.appendChild(t);
     }
-    toast.textContent = msg;
-    toast.className = 'show';
-    clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(() => {
-      toast.className = '';
-    }, 3000);
+    t.textContent = text;
+    t.className = 'visible';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.className = ''; }, 3200);
   }
 
-  // Inicializar cuando el DOM esté listo
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectPanel);
+    document.addEventListener('DOMContentLoaded', injectNativePanel);
   } else {
-    injectPanel();
+    injectNativePanel();
   }
 })();

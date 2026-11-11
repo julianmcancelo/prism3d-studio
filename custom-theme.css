@@ -83,83 +83,56 @@ body::after {
 }
 
 /* --------------------------------------------------------------------------
-   PRISM3D FLOATING TOOLBOX PANEL
+   PRISM3D SIDEBAR CARD (SIMPLIFICAR COLORES & ELIMINAR PIEZAS)
    -------------------------------------------------------------------------- */
-#prism3d-toolbox-panel {
+#prism-sidebar-block {
   position: fixed;
-  top: 70px;
-  right: 18px;
-  width: 280px;
+  top: 68px;
+  right: 20px;
+  width: 310px;
   background: rgba(17, 24, 39, 0.95);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(6, 182, 212, 0.35);
   border-radius: 12px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   z-index: 10000;
-  color: #e2e8f0;
+  padding: 16px;
+  color: #f1f5f9;
   font-size: 13px;
-  overflow: hidden;
-  transition: all 0.25s ease;
 }
 
-#prism3d-toolbox-panel.collapsed .prism-body {
-  display: none;
+.prism-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.prism-header {
-  padding: 10px 14px;
-  background: linear-gradient(90deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.1));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.prism-card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.prism-title {
-  font-weight: 700;
-  font-size: 13px;
-  background: linear-gradient(135deg, #06b6d4, #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.prism-mini-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  font-size: 12px;
-}
-.prism-mini-btn:hover { color: #fff; }
-
-.prism-body {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.prism-section {
-  display: flex;
-  flex-direction: column;
   gap: 8px;
-}
-
-.prism-section-title {
-  font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   color: #38bdf8;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.prism-desc {
+.prism-tag {
+  background: #0284c7;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.prism-card-desc {
   font-size: 11px;
   color: #94a3b8;
-  line-height: 1.35;
+  line-height: 1.4;
+  margin: 0;
 }
 
-.prism-row {
+.prism-card-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -167,14 +140,13 @@ body::after {
   font-size: 12px;
 }
 
-.prism-input {
-  width: 55px;
-  background: #0b0f17;
-  border: 1px solid #374151;
-  color: #fff;
-  padding: 4px 6px;
-  border-radius: 4px;
-  text-align: center;
+.prism-select {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
 }
 
 .prism-range {
@@ -182,54 +154,61 @@ body::after {
   accent-color: #06b6d4;
 }
 
-.prism-btn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  width: 100%;
-}
-
-.prism-btn-primary {
+.prism-action-btn {
   background: linear-gradient(135deg, #06b6d4, #3b82f6);
   color: #fff;
-}
-.prism-btn-primary:hover {
-  filter: brightness(1.15);
+  border: none;
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
 }
 
-.prism-btn-danger {
+.prism-action-btn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.prism-delete-btn {
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.prism-delete-btn:hover {
   background: #dc2626;
   color: #fff;
 }
-.prism-btn-danger:hover {
-  background: #b91c1c;
-}
 
-/* Toast message */
-#prism-toast {
+#prism-toast-msg {
   position: fixed;
-  bottom: 24px;
+  bottom: 30px;
   left: 50%;
-  transform: translateX(-50%) translateY(50px);
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid #38bdf8;
-  color: #f8fafc;
-  padding: 10px 20px;
-  border-radius: 25px;
+  transform: translateX(-50%) translateY(40px);
+  background: #0f172a;
+  border: 1px solid #06b6d4;
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 30px;
   font-size: 13px;
   font-weight: 500;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
   opacity: 0;
   transition: all 0.25s ease;
   pointer-events: none;
-  z-index: 10001;
+  z-index: 10002;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-#prism-toast.show {
+#prism-toast-msg.visible {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
