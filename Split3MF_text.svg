@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 40" width="280" height="40">
+  <defs>
+    <linearGradient id="prismGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+  <!-- Modern Prism Icon -->
+  <polygon points="12,30 24,8 36,30" fill="none" stroke="url(#prismGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+  <line x1="24" y1="8" x2="24" y2="30" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="2 2"/>
+  
+  <!-- Text Brand -->
+  <text x="46" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="900" fill="url(#prismGrad)" letter-spacing="0.5">
+    PRISM<tspan fill="#ffffff">3D</tspan>
+  </text>
+  <rect x="175" y="10" width="60" height="18" rx="4" fill="#3b82f6" fill-opacity="0.25" stroke="#3b82f6" stroke-width="1"/>
+  <text x="205" y="23" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#60a5fa" text-anchor="middle">STUDIO</text>
+</svg>
